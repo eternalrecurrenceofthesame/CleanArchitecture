@@ -85,7 +85,7 @@ buckpal
         -UpdateAccountStatePort
 ```
 ```
-1. Account 와 관련된 유스케이스를 구현한 모듈임을 나타내는 최상위 account 패키지
+1. 최상위 account 는 Account 와 관련된 유스 케이스를 구현한 모듈임을 나타낸다
 
 2. domain, application(응용 서비스)
  응용 서비스에서는 도메인 모델을 둘러싼 서비스 계층이된다.
@@ -96,4 +96,4 @@ buckpal
 
 
 ```
-?? 한번 만들어보고 리팩토링할 예정.
+
