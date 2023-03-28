@@ -88,5 +88,43 @@ application 계층은 입력 값이 들어올 때 유효성 검사를 해서 도
     <- 모델에 접근하지 않고 Command 에서 검증할 수 있으므로 입력 유효성 검증으로 구현한다. 
 ```
 
-주관적인 것 같지만 앞서 구분한 것처럼 
+주관적인 것 같지만 앞서 구분한 것처럼 인커밍 포트에서 커맨드를 받을 때 입력 유효성을 검증해서
+
+유스케이스를 오염시키지 않는다 / 구문과 의미로 제약 조건을 결정하면 체계적으로 규칙을 적용할 수 있다 46p
+
+그리고 비즈니스 규칙은 도메인 엔티티 안에 넣는 것이 좋다.
+
+```
+public class Account {  // 계좌 클래스 참고 
+
+// 비즈니스 규칙 
+public boolean withdraw(Money money, AccountId targetAccountId){
+if(!mayWithdraw(money)){ //비즈니스 규칙 검증 메서드 
+return false;
+}
+}
+}
+```
+비즈니스 규칙 바로 옆에 검증 조건을 두어서 응집성을 높일 수 있다!
+
+엔티티에서 비즈니스 규칙을 검증하기 힘들다면 유스케이스에서 도메인 엔티티를 사용하기 전에 해도 된다.
+```
+AccountId sourceAccountId
+                = sourceAccount.getId().orElseThrow(() -> new IllegalArgumentException());
+AccountId targetAccountId
+                = targetAccount.getId().orElseThrow(() -> new IllegalArgumentException()); // 검증 전용 예외 던지기 
+                
+  커멘드로 값을 찾고 loadAccountPort 로 계좌를 불러와서 값이 없으면 예외가 터지는 로직 SendMoneyService 참고  
+  
+  예외를 사용자에게 보여주거나 다른 방법으로 처리! 
+```
+
+정리하자면 복잡한 비즈니스 로직의 경우 유스케이스에서 도메인 엔티티를 로드해서 비즈니스 규칙을 검증할 수도 있지만
+
+도메인 모델을 로드해야 한다면 도메인 엔티티 내에 비즈니스 규칙을 구현해야 한다.
+
+
+
+
+
 
