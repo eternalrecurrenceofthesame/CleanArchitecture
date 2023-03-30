@@ -127,9 +127,42 @@ https://www.digitalocean.com/community/tutorials/mockito-argument-matchers-any-e
 then 은 given / when / then 의 then , withdraw (출금 메서드) 상호 작용이 일어나는지 테스트한다
 ```
 
+## 통합 테스트로 웹 어댑터 테스트하기
+
+SendMoneyControllerTest 참고
+
+```
+ // Http 요청
+        mockMvc.perform(post("/accounts/send/{sourceAccountId}/{targetAccountId}/{amount}",
+                41L,42L,500).header("Content-Type", "application/json"))
+                .andExpect(status().isOk());
+
+        // 컨트롤러에서 커멘드로 값 변경 후 유스케이스 호출
+        then(sendMoneyUseCase).should()
+                .sendMoney(eq(new SendMoneyCommand(
+                        new AccountId(41L),
+                        new AccountId(42L),
+                        Money.of(500L))));
+```
+
+단순히 컨트롤러를 테스트한 단위테스트 처럼 보이지만 통합 테스트이다. @WebMvcTest 애노테이션을 사용하면
+
+스프링이 경로 요청, 자바와 JSON 간의 매핑, HTTP 입력 검증 등에 필요한 전체 객체 네트워크를 인스턴스화 하도록 만든다.
+
+그리고 테스트에서 웹 컨트롤러가 아닌 이 네트워크의 일부로서 잘 동작하는지 검증한다
+
+웹 컨트롤러가 스프링 프레임워크에 강하게 묶여있기 때문에 격리된 상태로 단위테스트를 하는 것 보다 프레임워크와
+
+통합된 상태로 테스트하는 것이 합리적이다! 
+
+단순히 단위테스트를 하게 되면 매핑, 유효성 검증, HTTP 항목에 대한 커버리지가 낮아지고 프레임 워크를 구성하는 요소들이
+
+프로덕션 환경?? 에서 정상적으로 작동할지 확신할 수 없게된다.
 
 
+## 통합 테스트로 영속성 어댑터 테스트하기
 
+영속성 어댑터를 테스트 할 때도 통합 테스트를 진행해서 JPA 를 통해 데이터베이스에 매핑이 되는지 검증해야 한다.
 
 
 
