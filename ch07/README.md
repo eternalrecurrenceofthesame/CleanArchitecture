@@ -82,6 +82,55 @@ Tip
 차변은 자산, 대변은 부채와 자본
 ```
 
+SendMoneyServiceTest 참고.
+
+테스트한 유스케이스 서비스는 상태가 없기 때문에 then 섹션에서 특정 상태를 검증할 수 없다??
+
+대신 테스트는 서비스가 (모킹된) 의존 대상의 특정 메서드와 **상호작용**이 되었는지 여부를 검증한다. 상호 작용을 검증하는 것은
+
+테스트 코드의 행동 변경뿐만 아니라 코드의 구조 변경에도 취약해진다는 의미가 된다.?? 의존하고 있는 클래스가 리팩토링 되면 테스트도 변경될 확률이 높다.
+
+상호작용을 테스트 할 때는 모든 동작을 검증하는 대신 중요한 핵심만 골라서 테스트 하는 것이 좋다.
+
+이 테스트는 유스케이스와 연결된 포트와 락에 의존한 상호작용을 테스트하고 있는 통합 테스트에 가깝지만 Mock 객체로 작업하고 
+
+있기 때문에 실제 의존성을 관리하지 않아도 된다 (완전한 통합 테스트에 비해 유지보수가 유리)
+
+#### + Mock 을 이용한 테스트 예시들 
+
+간단하게 Mock 을 이용한 코드들을 정리해보겠다.
+
+```
+* private final LoadAccountPort loadAccountPort = Mockito.mock(LoadAccountPort.class);
+
+계좌를 가져오는 아웃 고잉 포트를 목 객체로 만듦(ORM 에 해당함)
+
+* private Account givenAnAccountWithId(AccountId id){
+        Account account = Mockito.mock(Account.class);
+
+        given(account.getId()).willReturn(Optional.of(id));
+        given(loadAccountPort.loadAccount(eq(account.getId().get()), any(LocalDateTime.class)))
+                .willReturn(account);
+
+        return account;
+    }
+    
+Mock 계좌를 만들고 Mock 아웃 고잉 포트 만든 계좌를 가지고 올 수 있는지 테스트함
+
+eq 를 이용하면 정확히 일치하는 값을 가지고 옴, any 는 해당 타입이면 됨 willReturn 으로 리턴 되는지 체크
+
+https://www.digitalocean.com/community/tutorials/mockito-argument-matchers-any-eq 참고
+
+
+* then(sourceAccount).should().withdraw(eq(money), eq(targetAccountId));
+
+then 은 given / when / then 의 then , withdraw (출금 메서드) 상호 작용이 일어나는지 테스트한다
+```
+
+
+
+
+
 
 
 
