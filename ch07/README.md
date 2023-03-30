@@ -164,9 +164,46 @@ SendMoneyControllerTest 참고
 
 영속성 어댑터를 테스트 할 때도 통합 테스트를 진행해서 JPA 를 통해 데이터베이스에 매핑이 되는지 검증해야 한다.
 
+AccountPersistenceAdapterTest 참고
+
+```
+@DataJpaTest - 스프링 데이터 리포지터리를 포함한 데이터베이스 접근에 필요한 객체 네트워크 인스턴스화 선언
+
+@Import - @DataJpaTest 외에 추가로 필요한 객체들을 가지고 온다.
+
+@Sql - 테스트시 사용할 Sql 데이터를 인잇 할 때 사용 resources 에 경로 추가! 
+ex) @Sql("/AccountPersistenceAdapterTest.sql") // / 을 넣어야 한다!! /
+```
+
+AccountPersistenceAdapterTest 에서는 데이터베이스를 모킹하지 않았다는 점이 중요하다. (테스트가 실제로 데이터베이스에 접근)
+
+모킹하지 않고 실제 데이터베이스에 접근함으로써 모킹했을 때 발견하지 못하는 데이터베이스 문제점까지 커버리지 할 수 있다.
+
+Tip
+
+H2 데이터베이스를 사용하면 테스트시 메모리에 H2 임베디드 데이터베이스를 올려서 사용가능함!
+
+인메모리 사용시 실제 사용할 데이터베이스와 Sql 문법상 다를 수 있기 때문에 주의해야한다.
+
+정석대로 테스트하면 영속성 어댑터 테스트는 실제 데이터베이스를 대상으로 진행해야한다 
+
+Testcontainers 같은 라이브러리가 있음! www.testcontainers.org 참고
+
+
+## 시스템 테스트로 주요 경로 테스트하기
+
+전체 애플리케이션을 띄우고 Account API 요청이 잘 동작하는지 테스트해보기
+
+buckpal-sendMoneySystemTest
+
+```
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+스프링이 애플리케이션을 구성하는 모든 객체 네트워크를 띄움 + 랜덤 포트 설정 
+ 
+@Autowired
+private TestRestTemplate restTemplate; 을 이용해서 실제 HTTP 통신
 
 
 
-
-
+```
 
