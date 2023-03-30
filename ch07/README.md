@@ -29,4 +29,62 @@
 
 ## 단위 테스트로 도메인 엔티티 테스트하기
 
+* AccountTest
+
+Account 모델을 테스트하기 위해 테스트용 계좌와 계좌 활동 빌더를 만들었다. (AccountTestData, ActivitTestData)
+
+```
+@Test
+    void withdrawalSucceeds(){
+        AccountId accountId = new AccountId(1L); // 생성자 호출
+
+        Account account = defaultAccount()
+                .withAccountId(accountId)
+                .withBaselineBalance(Money.of(555L))
+                .withActivityWindow(new ActivityWindow(
+                        defaultActivity()
+                                .withTargetAccount(accountId) // 빌려주는 계좌
+                                .withMoney(Money.of(999L)).build(),
+                        defaultActivity()
+                                .withTargetAccount(accountId)
+                                .withMoney(Money.of(1L)).build()))
+                .build();
+
+        Money balance = account.calculateBalance(); // 계좌 내역으로 기준 잔액 맞추기
+
+        assertThat(balance).isEqualTo(Money.of(1555L)); // 기본 금액 + 차변 금액을 더함 (차변은 자산)
+        assertThat(account.getActivityWindow().getActivities()).hasSize(2); // 활동 내역 개수 2 개 
+        assertThat(account.calculateBalance()).isEqualTo(Money.of(1555L)); 
+        
+        boolean success = account.withdraw(Money.of(555L), new AccountId(99L)); // withdraw 가능한 자산이 있는지 테스트.
+        assertThat(success).isTrue();
+
+ }
+```    
+
+간단한 테스트 예시.
+
+Account 의 필드값에 Actvity(Mock 의 역할) 를 만들어서 넣고 Account 의 기본 기능들을 한번씩 사용해봄. 테스트 패키지 참고.
+
+## 단위 테스트로 유스케이스 테스트하기
+
+인커밍 포트 인터페이스가 구현되는 유스케이스를 테스트하기
+
+SendMoneyService 유스케이스는 커멘드 모델의 금액 한도를 체크하고 (100 만원), 차변 계좌와 대변 계좌를 로드해온다.
+
+차변 계좌와 대변 계좌의 유무를 체크하고, 대변 계좌에 락을 걸고 차변계좌에서 대변 계좌로 한도 금액 만큼 전송한다 
+
+그리고 각각의 계좌 활동 내역을 업데이트한 후 락을 해제.
+
+```
+Tip 
+
+차변은 자산, 대변은 부채와 자본
+```
+
+
+
+
+
+
 
