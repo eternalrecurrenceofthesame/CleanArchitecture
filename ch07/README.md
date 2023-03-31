@@ -220,5 +220,8 @@ private LoadAccountPort loadAccountPort;
 도메인 특화 언어는 어떤 테스트에서 사용해도 유용하지만 시스템 테스트에서 더욱 의미를 가진다.
 ```
 
+## 얼마 만큼의 테스트가 충분할까?
+
+
 
 
