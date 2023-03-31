@@ -203,7 +203,22 @@ buckpal-sendMoneySystemTest
 @Autowired
 private TestRestTemplate restTemplate; 을 이용해서 실제 HTTP 통신
 
+@Autowired
+private LoadAccountPort loadAccountPort; 
+실제 HTTP 통신 하는 것 처럼 출력 어댑터 사용, 데이터베이스를 연결하는 영속성 어댑터
 
+다른 출력 어댑터를 사용할 수도 있음 시스템 테스트라고 하더라도 언제나 서드파티 시스템을 
+
+실행해서 테스트할 수 있는 것이 아니기 때문에 모킹해서 어댑터를 받아와야 할 수도 있다
+```
 
 ```
+그외 테스트 가독성을 높이기 위해 지저분한 로직들을 헬퍼 메서드로 만들어서 테스트 가독성을 높였다
+
+헬퍼메서드가 여러가지 상태를 검증할 때 사용할 수 있는 도메인 특화 언어를 제공한다
+
+도메인 특화 언어는 어떤 테스트에서 사용해도 유용하지만 시스템 테스트에서 더욱 의미를 가진다.
+```
+
+
 
