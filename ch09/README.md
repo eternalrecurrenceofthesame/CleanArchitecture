@@ -83,5 +83,48 @@ String value() default "";
 
 컨테이너에 올리고싶지 않은 객체까지 올라갈 수 있다.
 
+#### + 스프링의 자바 컨피그로 조립하기
+
+```
+@Configuration // 컴포넌트 스캔에서 사용할 설정이라는 표시
+@EnableJpaRepositories // 스프링 데이터 JPA 로 만든 리포지토리를 사용하는 애노테이션
+class PersistenceAdapterConfiguration{
+
+@Bean
+AccountPersistenceAdapter accountPersistenceAdapter{
+    AccountRepository accountRepository,
+    ActivityRepository activityRepository,
+    AccountMapper accountMapper){
+    
+    return new AccountPersistenceAdapter(
+    accountRepository,
+    activityRepository,
+    accountMappger);
+    }
+}
+
+@Bean
+AccountMapper accountMapper(){
+    return new AccountMapper();
+}
+
+}
+```
+
+@Configuration 설정 클래스에 설정된 빈을 사용해서 스프링 컨테이너에 빈을 등록한다.
+
+모든 빈을 가져오는 대신 설정을 따로 분리해서 관리할 수 있다.
+
+PersistenceAdapterconfiguration 클래스를 만듦으로써 아웃 고잉 포트의 영속성 어댑터에서 사용하는(한정된) 객체를
+
+빈으로 만들고 스프링 컨테이너에 올릴수 있게 되었다.
+
+비슷한 방법으로 인커밍 포트의 웹 어댑터, 애플리케이션 계츠으이 특정 모듈들을 위한 설정 클래스도 만들 수 있다.
+
+애플리케이션 계층에 @Component 애노테이션을 붙이도록 강제하지 않아서 프레임워크에 대한 의존성 없이 유지할 수 있다.
+
+
+
+
 
 
