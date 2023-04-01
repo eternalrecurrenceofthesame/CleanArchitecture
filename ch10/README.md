@@ -53,7 +53,7 @@ buckpal
 
 접근 제한자 방식과 컴파일 후 체크 방식을 사용해서 의존성 규칙을 위반하지 않게 하기
 
-DependencyRuleTests 클래스 참고
+test - DependencyRuleTests, archunit 참고
 
 ArchUnitAPI 를 사용한 계층간 의존성 체크시 주의할 점은 오타를 내버리면 체크가 제대로 되지 않는 다는 점임 
 
